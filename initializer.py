@@ -2,7 +2,7 @@ pins_config = {
     'board1': {
         'bus1': {
             'slot': 6,
-            'address': 0x21,
+            'address': 0x20,
             'pins': {
                 0: {
                     'name': 'sense_door_closed',
@@ -68,7 +68,7 @@ pins_config = {
         },
         'bus2': {
             'slot6': 6,
-            'address': 0x22,
+            'address': 0x21,
             'pins': {
                 0: {
                     'name': 'auto_beam_gate',
@@ -142,7 +142,7 @@ pins_config = {
     'board2': {
         'bus1': {
             'slot': 7,
-            'address': 0x23,
+            'address': 0x22,
             'pins': {
                 0: {
                     'name': 'LSD_0',
@@ -181,7 +181,7 @@ pins_config = {
         },
         'bus2': {
             'slot': 7,
-            'address': 0x24,
+            'address': 0x23,
             'pins': {
                 0: {
                     'name': 'auto_implant',
@@ -244,7 +244,7 @@ pins_config = {
     'board3': {
         'bus1': {
             'slot': 8,
-            'address': 0x25,
+            'address': 0x24,
             'pins': {
                 0: {
                     'name': 'LSD_0',
@@ -314,7 +314,7 @@ pins_config = {
         },
         'bus2': {
             'slot': 8,
-            'address': 0x26,
+            'address': 0x25,
             'pins': {
                 0: {
                     'name': 'binary_divisor_exponent_0',
@@ -398,7 +398,7 @@ pins_config = {
     'board4': {
         'bus1': {
             'slot': 9,
-            'address': 0x27,
+            'address': 0x26,
             'pins': {
                 12: {
                     'name': 'bin_cur_range_0',
@@ -420,7 +420,7 @@ pins_config = {
         },
         'bus2': {
             'slot': 9,
-            'address': 0x28,
+            'address': 0x27,
             'pins': {
 
             }
