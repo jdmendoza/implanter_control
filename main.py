@@ -35,6 +35,17 @@ class MachineControl:
         """ 
         self.__init__()
 
+    def pin_viewer(self, board_obj):
+        output = []
+        bus = board_obj.pin_defs
+        for pin in bus:
+            output.append((bus[pin]['name'], board_obj.mcp.get_pin(pin).value))
+        
+        return output
+
+
+        bus2 = pins_config['board{}'.format(b)]['bus2']['pins']
+
     def ready_check(self):
         """
         Checks that the door is closed and that the mode is auto
