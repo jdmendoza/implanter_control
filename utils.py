@@ -1,12 +1,10 @@
 import logging
-
 from adafruit_mcp230xx.mcp23017 import MCP23017
 import digitalio
 
 
 class GpioExpander:
     def __init__(self, comm, **definitions):
-
         self.mcp = MCP23017(comm, definitions['address'])
         self.pin_defs = definitions['pins']
         self.initialize_pins()
@@ -16,10 +14,16 @@ class GpioExpander:
         logging.info(self.pin_defs[pin])
         logging.info(self.mcp.get_pin(pin))
 
-    def initialize_pins(self):
+    def pin(self, pin_name): # Need to test this
+        return self.mcp.get_pin(self.pin_defs[pin_name]['pin_num'])
 
-        for pin_num in self.pin_defs.keys():
-            if self.pin_defs[pin_num]['mode'] == 'input':
+    def initialize_pins(self):
+        """
+        When this function is called. The pins defined in initialized.py for this board/bus are initialiazed as an input or output with the init value.
+        """
+
+        for pin_name in self.pin_defs.keys():
+            if self.pin_defs[pin_name]['mode'] == 'input':
                 self.mcp.get_pin(pin_num).direction = digitalio.Direction.INPUT
                 logging.info('Pin {} set to {}'.format(pin_num, self.pin_defs[pin_num]['mode']))
 
@@ -43,9 +47,12 @@ def to_binary(dec):
 
 
 def to_bcd(board, tuples):
+    """
+    This function is used to control groups of pins that represent a bcd.
+    """
     for i, j in tuples:
         if j:
-            board.mcp.get_pin(i).value = True
+            board.mcp.pin(i).value = True
         else:
-            board.mcp.get_pin(i).value = False
+            board.mcp.pin(i).value = False
     return True

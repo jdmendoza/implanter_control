@@ -2,7 +2,7 @@ import logging
 import time
 import busio
 import board
-from initializer import pins_config, pin_mapper
+from initializer import pins_config
 from utils import GpioExpander, bcd, to_binary, to_bcd
 from waiting import wait
 
@@ -36,6 +36,9 @@ class MachineControl:
         self.__init__()
 
     def pin_viewer(self, board_obj):
+        """
+        Returns all the pin values for a board. 
+        """
         output = []
         bus = board_obj.pin_defs
         for pin in bus:
@@ -50,12 +53,11 @@ class MachineControl:
         """
         Checks that the door is closed and that the mode is auto
         """
-        sense_door_closed = [0]
-        mode_sense = [3]  # Auto when pin is low
+        # mode_sense pin -  Auto when pin is low
 
         checks = [
-            self.io_board_1_1.mcp.get_pin(sense_door_closed[0]).value,
-            not self.io_board_1_1.mcp.get_pin(mode_sense[0]).value
+            self.io_board_1_1.pin('sense_door_closed').value,
+            not self.io_board_1_1.pin('mode_sense').value
         ]
 
         return all(checks)
@@ -66,28 +68,22 @@ class MachineControl:
         2. Turn off the linear motor
         3. Hold indicator ON
         """
-        auto_beam_gate_pin = [0]
-        hold_pin = [8]
-        hold_flashing_pin = [9]
-        start_button = [14]
-        stop_button = [13]
-
         logging.info('Entered HOLD routine')
 
-        self.io_board_1_2.mcp.get_pin(auto_beam_gate_pin[0]).value = False  # Which logic is off?
+        self.io_board_1_2.pin('auto_beam_gate_pin').value = False  # Which logic is off?
 
         self.stop_scan()
 
-        self.io_board_1_2.mcp.get_pin(hold_flashing_pin[0]).value = False
-        self.io_board_1_2.mcp.get_pin(hold_pin[0]).value = True
+        self.io_board_1_2.pin('hold_flashing').value = False
+        self.io_board_1_2.pin('hold_pin').value = True
 
         logging.info('Finished HOLD routine \n Waiting for START or STOP')
 
         while True:
-            if self.io_board_1_1.mcp.get_pin(start_button[0]).value:  # wait for start before returning to the main program
+            if self.io_board_1_1.pin('start').value:  # wait for start before returning to the main program
                 return True
 
-            if self.io_board_1_1.mcp.get_pin(stop_button[0]).value:
+            if self.io_board_1_1.pin('stop').value:
                 self.stop_routine()
                 return False
 
@@ -99,32 +95,25 @@ class MachineControl:
         4. Once the end station reaches the 0 position, lock it
         5. Stop button lights up
         """
-        auto_beam_gate_pin = [0]
-        stop_flashing_pin = [7]
-        stop_pin = [6]
 
         logging.info('Entered STOP routine')
 
-        self.io_board_1_2.mcp.get_pin(auto_beam_gate_pin[0]).value = False  # Which logic is off?
+        self.io_board_1_2.pin('auto_beam_gate').value = False  # Which logic is off?
         self.es_to_zero_position()
 
-        self.io_board_1_2.mcp.get_pin(stop_flashing_pin[0]).value = True 
+        self.io_board_1_2.pin('stop_flashing').value = True 
 
         self.stop_scan()
 
-        self.io_board_1_2.mcp.get_pin(stop_flashing_pin[0]).value = False
-        self.io_board_1_2.mcp.get_pin(stop_pin[0]).value = True
+        self.io_board_1_2.pin('stop_flashing').value = False
+        self.io_board_1_2.pin('stop').value = True
 
         logging.info('Entered END routine')
 
         return
 
     def completion_mode(self):
-        auto_beam_gate_pin = [0]
-        hold_button_pin = [15]
-        hold_flashing_pin = [9]
-        alarm_pulse_pin = [13]
-
+  
         logging.info('Entering Completion Mode')
 
         """
@@ -135,47 +124,35 @@ class MachineControl:
         5. The operator presses complete so it stops flashing
         """
 
-        self.io_board_1_2.mcp.get_pin(auto_beam_gate_pin[0]).value = False
+        self.io_board_1_2.pin('auto_beam_gate').value = False
         self.stop_scan()
 
-        self.io_board_1_2.mcp.get_pin(hold_flashing_pin[0]).value = True
-        self.io_board_1_2.mcp.get_pin(alarm_pulse_pin[0]).value = True
+        self.io_board_1_2.pin('hold_flashing').value = True
+        self.io_board_1_2.pin('alarm_pulse').value = True
 
         logging.info('Waiting for hold button to be pressed')
         def hold_button():
             while True:
-                if self.io_board_1_2.mcp.get_pin(hold_button_pin[0]).value:
+                if self.io_board_1_2.pin('hold_button').value:
                     return True
                 else:
                     time.sleep(.1)
 
         wait(hold_button)
 
-        self.io_board_1_2.mcp.get_pin(alarm_pulse_pin[0]).value = False
-        self.io_board_1_2.mcp.get_pin(hold_flashing_pin[0]).value = False
+        self.io_board_1_2.pin('alarm_flashing').value = False
+        self.io_board_1_2.pin('hold_flashing').value = False
 
         return
 
     def run_implant(self):  
-        start_button = [14]
-        hold_button = [15]
-        stop_button = [13]
-
-        interlock_pin = [11]
-        auto_implant = [0]
-        auto_beam_gate = [1]
-        extend = [2]
-        retract = [3]
-        run_pin = [5]
-        alarm_pin = [12]
 
         try:
             while True:
 
-                start_pin_on = self.io_board_1_1.mcp.get_pin(start_button[0]).value
-
-                if start_pin_on and self.ready_check():
-                    """Code for the stepper motor and to look for stop & hold
+                if self.io_board_1_1.pin('start').value and self.ready_check():
+                    """
+                    Code for the stepper motor and to look for stop & hold
                     1. Move end station to zero position
                     2. The wafer is set to implant angle
                     3. Interlocks are checked
@@ -187,42 +164,42 @@ class MachineControl:
                     traversals = self.get_traversals()
 
                     completion = 0
-                    self.io_board_2_2.mcp.get_pin(run_pin[0]).value = True  # Start up the motor
+                    self.io_board_2_2.pin('run').value = True  # Start up the motor
                     time.sleep(30)  # Wait for motor to come up
 
                     wait(self.es_to_zero_position, timeout_seconds=10)  # Get the end station to the zero position
                     wait(self.implant_angle_sense, timeout_seconds=10)  # What to do if this errors out
-                    self.io_board_2_2.mcp.get_pin(auto_implant[0]).value = True  # Prepare the auto implant angle
+                    self.io_board_2_2.pin('auto_implant').value = True  # Prepare the auto implant angle
                     time.sleep(1)
-                    self.io_board_1_2.mcp.get_pin(auto_beam_gate[0]).value = True  # Open the beam gate
+                    self.io_board_1_2.pin('auto_beam_gate').value = True  # Open the beam gate
 
                     for traversal in range(traversals):  # Start the cycle
                         logging.info('Starting traversal: {}'.format(traversal))
 
-                        self.io_board_2_2.mcp.get_pin(retract[0]).value = True
+                        self.io_board_2_2.pin('retract(0)').value = True
                         completion += 1
 
-                        if not self.io_board_1_1.mcp.get_pin(interlock_pin[0]).value:
+                        if not self.io_board_1_1.pin('interlock').value:
                             logging.critical('Issue with interlocks')
-                            self.io_board_1_2.mcp.get_pin(alarm_pin[0]).value = True
+                            self.io_board_1_2.pin('alarm').value = True
                             result = self.hold_routine()
                             if not result:
                                 # Do I call reset here?
                                 break
 
-                        if self.io_board_1_1.mcp.get_pin(hold_button[0]):
+                        if self.io_board_1_1.pin('hold'):
                             logging.warning('Hold button pressed')
                             result = self.hold_routine()  # get stuck here until the button is pressed
                             if not result:  # if they want to stop it while in hold mode
                                 # Do I call reset here?
                                 break
 
-                        if self.io_board_1_1.mcp.get_pin(stop_button[0]):
+                        if self.io_board_1_1.pin('stop'):
                             logging.warning('Stop button pressed')
                             self.stop_routine()
                             break  # Shut off and return to checking for
 
-                        self.io_board_1_1.mcp.get_pin(extend[0]).value = True
+                        self.io_board_1_1.pin('extend(0)').value = True
                         completion += 1
                         self.send_bcd_percent_complete(completion, traversals)
 
@@ -239,40 +216,38 @@ class MachineControl:
         return
 
     def get_traversals(self):
-        lsd_pins = [0, 1, 2, 3]
-        msd_pins = [4, 5, 6]
+        lsd_pins = ['LSD_{}' for i in range(3)]
+        msd_pins = ['MSD_{}' for i in range(3)]
 
         traversals = 0
-        traversals += bcd([self.io_board_2_1.mcp.get_pin(i).value for i in lsd_pins])
-        traversals += bcd([self.io_board_2_1.mcp.get_pin(i).value for i in msd_pins]) * 10
+        traversals += bcd([self.io_board_2_1.pin(i).value for i in lsd_pins])
+        traversals += bcd([self.io_board_2_1.pin(i).value for i in msd_pins]) * 10
 
         return traversals
 
     def get_dose_mantissa(self):
-        lsd_pins = [0, 1, 2, 3]
-        lsd_2_pins = [4, 5, 6, 7, 8]
-        msd_pins = [9, 10, 11, 12]
+        lsd_pins = ['LSD_{}' for i in range(4)] 
+        lsd_2_pins = ['LSD2_{}' for i in range(4)] 
+        msd_pins = ['MSD_{}' for i in range(4)] 
 
         dose_mantissa = 0
-        dose_mantissa += bcd([self.io_board_3_1.mcp.get_pin(i).value for i in lsd_pins]) / 100
-        dose_mantissa += bcd([self.io_board_3_1.mcp.get_pin(i).value for i in lsd_2_pins]) / 10
-        dose_mantissa += bcd([self.io_board_3_1.mcp.get_pin(i).value for i in msd_pins]) / 1
+        dose_mantissa += bcd([self.io_board_3_1.pin(i).value for i in lsd_pins]) / 100
+        dose_mantissa += bcd([self.io_board_3_1.pin(i).value for i in lsd_2_pins]) / 10
+        dose_mantissa += bcd([self.io_board_3_1.pin(i).value for i in msd_pins]) / 1
 
         return dose_mantissa
 
     def get_binary_dose_exponent(self):
-        bde_pins = [13, 14, 15]
-        bde = bcd([self.io_board_3_1.mcp.get_pin(i).value for i in bde_pins])
+        bde_pins = ['bin_dose_exp_{}'.format(i) for i in range(3)]
+
+        bde = bcd([self.io_board_3_1.mcp.pin(i).value for i in bde_pins])
 
         return bde
 
     def get_current_range(self):
-        msb_pin = [15]
-        lsb_pin = [12]
-        lsb_2_pin = [13]
-        lsb_3_pin = [14]
+        current_range_pins = ['bin_cur_range_{}'.format(i) for i in range(3)]
 
-        curr_range = bcd([self.io_board_4_1.mcp.get_pin(i).value for i in msb_pin + lsb_pin + lsb_2_pin + lsb_3_pin])
+        curr_range = bcd([self.io_board_4_1.pin(i).value for i in current_range_pins])
 
         return int(curr_range / 2)
 
@@ -297,9 +272,9 @@ class MachineControl:
         return True
 
     def send_bcd_divisor(self, value):
-        msd_pin = [11, 12, 13, 14]
-        lsd_pin = [3, 4, 5, 6]
-        lsd_2_pin = [7, 8, 9, 10]
+        msd_pin = ['binary_divisor_exponent_{}'.format(i) for i in range(3)] 
+        lsd_pin = ['bcd_divisor_exponent_lsd_{}'.format(i) for range(4)] 
+        lsd_2_pin = ['bcd_divisor_exponent_2nd_lsd_{}'.format(i) in range(4)]
 
         msd_bin = to_binary(value)
         value /= 10
@@ -317,6 +292,9 @@ class MachineControl:
         return True
 
     def send_binary_divisor_exponent(self, value):
+        """
+        Review this with new pin config.
+        """
         bin_div_exp_pins = [0, 1, 2]
 
         bin_div_exp_bin = to_binary(value)
@@ -325,9 +303,18 @@ class MachineControl:
 
         return True
 
+    def send_binary_divisor(self, value):
+        out_pins = [0, 1, 2]
+
+        out_bin = to_binary(int(value))
+        logging.info('Sending binary divisor: {} dec, {} bin'.format(value, out_bin))
+        to_bcd(self.io_board_3_2, zip(out_pins, out_bin))
+
+        return True
+
     def send_bcd_percent_complete(self, completions, traversals):
-        msd_pin = [11, 12, 13, 14]
-        lsd_pin = [9, 10]
+        msd_pin = ['bcd_percent_complete_msd_{}'.format(i) for range(4)]
+        lsd_pin = ['bcd_percent_complete_lsd_{}'.format(i) for range(4)]
 
         value = round(completions / (2 * traversals), 1)
         logging.info('Sending percent complete ({}%) to outputs'.format(value))
@@ -341,33 +328,20 @@ class MachineControl:
 
         return True
 
-    def send_binary_divisor(self, value):
-        out_pins = [0, 1, 2]
-
-        out_bin = to_binary(int(value))
-        logging.info('Sending binary divisor: {} dec, {} bin'.format(value, out_bin))
-        to_bcd(self.io_board_3_2, zip(out_pins, out_bin))
-
-        return True
-
     def es_to_zero_position(self):
-        load_position_sense_pin = [5]
-        retract = [5]
-        go_to_load = [4]
-
         logging.info('End station moving to the zero position')
 
         def is_at_zero_position():
-            return self.io_board_1_1.mcp.get_pin(load_position_sense_pin[0]).value
+            return self.io_board_1_1.pin('load_position_sense').value
 
-        self.io_board_1_1.mcp.get_pin(go_to_load[0]).value = True
-        self.io_board_1_1.mcp.get_pin(retract[0]).value = True
+        self.io_board_1_1.pin('go_to_load(0)').value = True
+        self.io_board_1_1.pin('retract(0)').value = True
 
         while True:
             if is_at_zero_position():
                 logging.info('End station is at the zero position')
-                self.io_board_2_2.mcp.get_pin(go_to_load[0]).value = False
-                self.io_board_2_2.mcp.get_pin(retract[0]).value = False
+                self.io_board_2_2.pin('go_to_load(0)').value = False
+                self.io_board_2_2.pin('retract(0)').value = False
 
                 return True
 
@@ -375,35 +349,28 @@ class MachineControl:
                 time.sleep(0.1)
 
     def extend_to_end(self):
-        extend = [2]
-        not_load_position_sense_pin = [4]
-
         logging.info('Extending to the end')
 
         def is_at_final_position():
-            return self.io_board_1_1.mcp.get_pin(not_load_position_sense_pin[0]).value
+            return self.io_board_1_1.pin('not_load_position_sense').value
 
-        self.io_board_2_2.mcp.get_pin(extend[0]).value = True
+        self.io_board_2_2.pin('extend(0)').value = True
 
         while True:
             if is_at_final_position():
                 logging.info('Extension completed')
-                self.io_board_2_2.mcp.get_pin(extend[0]).value = False
+                self.io_board_2_2.pin('extend(0)').value = False
                 return True
 
             else:
                 time.sleep(0.1)
 
     def stop_scan(self):
-        extend = [2]
-        retract = [3]
 
-        self.io_board_1_1.mcp.get_pin(extend[0]).value = False
-        self.io_board_1_1.mcp.get_pin(retract[0]).value = False
+        self.io_board_1_1.pin('extend(0)').value = False
+        self.io_board_1_1.pin('retract(0)').value = False
 
         return True
 
     def implant_angle_sense(self):
-        angle_implant_pin = [7]
-
-        return self.io_board_1_1.mcp.get_pin(angle_implant_pin[0]).value
+        return self.io_board_1_1.pin('angle_implant').value

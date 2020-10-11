@@ -1,442 +1,594 @@
 pins_config = {
-    'board1': {
-        'bus1': {
-            'slot': 6,
-            'address': 0x20,
-            'pins': {
-                0: {
-                    'name': 'sense_door_closed',
-                    'mode': 'input',
-                },
-                1: {
-                    'name': 'sense_1/2_batch',
-                    'mode': 'input',
-                },
-                3: {
-                    'name': 'mode_sense',
-                    'mode': 'input'
-                },
-                4: {
-                    'name': 'not_load_position_sense',
-                    'mode': 'input'
-                },
-                5: {
-                    'name': 'load_position_sense',
-                    'mode': 'input'
-                },
-                6: {
-                    'name': 'load_unload_sense',
-                    'mode': 'input'
-                },
-                7: {
-                    'name': 'implant_angle_sense',
-                    'mode': 'input'
-                },
-                8: {
-                    'name': 'run_speed_error',
-                    'mode': 'input'
-                },
-                9: {
-                    'name': 'search_speed_error',
-                    'mode': 'input'
-                },
-                10: {
-                    'name': 'position_error',
-                    'mode': 'input'
-                },
-                11: {
-                    'name': 'interlock',
-                    'mode': 'input'
-                },
-                12: {
-                    'name': 'dc_rtn',
-                    'mode': 'input'
-                },
-                13: {
-                    'name': 'stop',
-                    'mode': 'input'
-                },
-                14: {
-                    'name': 'start',
-                    'mode': 'input'
-                },
-                15: {
-                    'name': 'hold',
-                    'mode': 'input'
-                }
-            }
+   {
+  "board1": {
+    "bus1": {
+      "slot": 6,
+      "address": 32,
+      "pins": {
+        "sense_door_closed": {
+          "name": "sense_door_closed",
+          "mode": "input",
+          "pin_num": 0,
+          "socket": "A"
         },
-        'bus2': {
-            'slot6': 6,
-            'address': 0x21,
-            'pins': {
-                0: {
-                    'name': 'auto_beam_gate',
-                    'mode': 'output',
-                    'init': False
-                },
-                1: {
-                    'name': 'moving',
-                    'mode': 'output',
-                    'init': False
-                },
-                2: {
-                    'name': 'locked',
-                    'mode': 'output',
-                    'init': False
-                },
-                6: {
-                    'name': 'stop',
-                    'mode': 'output',
-                    'init': False
-                },
-                7: {
-                    'name': 'stop_flashing',
-                    'mode': 'output',
-                    'init': False
-                },
-                8: {
-                    'name': 'hold',
-                    'mode': 'output',
-                    'init': False
-                },
-                9: {
-                    'name': 'hold_flashing',
-                    'mode': 'output',
-                    'init': False
-                },
-                10: {
-                    'name': 'in_process',
-                    'mode': 'output',
-                    'init': False
-                },
-                11: {
-                    'name': 'in_process_flashing',
-                    'mode': 'output',
-                    'init': False
-                },
-                12: {
-                    'name': 'alarm',
-                    'mode': 'output',
-                    'init': False
-                },
-                13: {
-                    'name': 'alarm_flashing',
-                    'mode': 'output',
-                    'init': False
-                },
-                14: {
-                    'name': 'complete',
-                    'mode': 'output',
-                    'init': False
-                },
-                15: {
-                    'name': 'complete_flashing',
-                    'mode': 'output',
-                    'init': False
-                },
-
-            }
+        "sense_1/2_batch": {
+          "name": "sense_1/2_batch",
+          "mode": "input",
+          "pin_num": 2,
+          "socket": "C"
+        },
+        "mode_sense": {
+          "name": "mode_sense",
+          "mode": "input",
+          "pin_num": 3,
+          "socket": "D"
+        },
+        "not_load_position_sense": {
+          "name": "not_load_position_sense",
+          "mode": "input",
+          "pin_num": 7,
+          "socket": "M"
+        },
+        "load_position_sense": {
+          "name": "load_position_sense",
+          "mode": "input",
+          "pin_num": 8,
+          "socket": "N"
+        },
+        "load_unload_sense": {
+          "name": "load_unload_sense",
+          "mode": "input",
+          "pin_num": 12,
+          "socket": "U"
+        },
+        "implant_angle_sense": {
+          "name": "implant_angle_sense",
+          "mode": "input",
+          "pin_num": 13,
+          "socket": "V"
+        },
+        "run_speed_error": {
+          "name": "run_speed_error",
+          "mode": "input",
+          "pin_num": 9,
+          "socket": "P"
+        },
+        "search_speed_error": {
+          "name": "search_speed_error",
+          "mode": "input",
+          "pin_num": 10,
+          "socket": "R"
+        },
+        "position_error": {
+          "name": "position_error",
+          "mode": "input",
+          "pin_num": 11,
+          "socket": "T"
+        },
+        "interlock": {
+          "name": "interlock",
+          "mode": "input",
+          "pin_num": 1,
+          "socket": "B"
+        },
+        "stop": {
+          "name": "stop",
+          "mode": "input",
+          "pin_num": 4,
+          "socket": "F"
+        },
+        "start": {
+          "name": "start",
+          "mode": "input",
+          "pin_num": 5,
+          "socket": "H"
+        },
+        "hold": {
+          "name": "hold",
+          "mode": "input",
+          "pin_num": 6,
+          "socket": "J"
         }
+      }
     },
-    'board2': {
-        'bus1': {
-            'slot': 7,
-            'address': 0x22,
-            'pins': {
-                0: {
-                    'name': 'LSD_0',
-                    'mode': 'input'
-                },
-                1: {
-                    'name': 'LSD_1',
-                    'mode': 'input'
-                },
-                2: {
-                    'name': 'LSD_2',
-                    'mode': 'input'
-                },
-                3: {
-                    'name': 'LSD_3',
-                    'mode': 'input'
-                },
-                4: {
-                    'name': 'MSD_0',
-                    'mode': 'input'
-                },
-                5: {
-                    'name': 'MSD_1',
-                    'mode': 'input'
-                },
-                6: {
-                    'name': 'MSD_2',
-                    'mode': 'input'
-                },
-                7: {
-                    'name': 'LSD_0',
-                    'mode': 'input'
-                }
-
-            }
+    "bus2": {
+      "slot6": 6,
+      "address": 33,
+      "pins": {
+        "auto_beam_gate": {
+          "name": "auto_beam_gate",
+          "mode": "output",
+          "init": False,
+          "pin_num": 10,
+          "socket": 13
         },
-        'bus2': {
-            'slot': 7,
-            'address': 0x23,
-            'pins': {
-                0: {
-                    'name': 'auto_implant',
-                    'mode': 'output',
-                    'init': False
-                },
-                1: {
-                    'name': 'command_violate',
-                    'mode': 'output',
-                    'init': False
-                },
-                2: {
-                    'name': 'extend(0)',
-                    'mode': 'output',
-                    'init': False
-                },
-                3: {
-                    'name': 'retract(0)',
-                    'mode': 'output',
-                    'init': False
-                },
-                4: {
-                    'name': 'go_to_load(0)',
-                    'mode': 'output',
-                    'init': False
-                },
-                5: {
-                    'name': 'run(0)',
-                    'mode': 'output',
-                    'init': False
-                },
-                9: {
-                    'name': 'bcd_percent_complete_lsd_0',
-                    'mode': 'output',
-                    'init': False
-                },
-                10: {
-                    'name': 'bcd_percent_complete_lsd_1',
-                    'mode': 'output',
-                    'init': False
-                },
-                11: {
-                    'name': 'bcd_percent_complete_msd_0',
-                    'mode': 'output',
-                    'init': False
-                },
-                12: {
-                    'name': 'bcd_percent_complete_msd_1',
-                    'mode': 'output',
-                    'init': False
-                },
-                13: {
-                    'name': 'bcd_percent_complete_msd_2',
-                    'mode': 'output',
-                    'init': False
-                }
-            }
-        }
-    },
-    'board3': {
-        'bus1': {
-            'slot': 8,
-            'address': 0x24,
-            'pins': {
-                0: {
-                    'name': 'LSD_0',
-                    'mode': 'input'
-                },
-                1: {
-                    'name': 'LSD_1',
-                    'mode': 'input'
-                },
-                2: {
-                    'name': 'LSD_2',
-                    'mode': 'input'
-                },
-                3: {
-                    'name': 'LSD_3',
-                    'mode': 'input'
-                },
-                4: {
-                    'name': 'LSD_4',
-                    'mode': 'input'
-                },
-                5: {
-                    'name': 'LSD2_0',
-                    'mode': 'input'
-                },
-                6: {
-                    'name': 'LSD2_1',
-                    'mode': 'input'
-                },
-                7: {
-                    'name': 'LSD2_2',
-                    'mode': 'input'
-                },
-                8: {
-                    'name': 'LSD2_3',
-                    'mode': 'input'
-                },
-                9: {
-                    'name': 'MSD_0',
-                    'mode': 'input'
-                },
-                10: {
-                    'name': 'MSD_1',
-                    'mode': 'input'
-                },
-                11: {
-                    'name': 'MSD_2',
-                    'mode': 'input'
-                },
-                12: {
-                    'name': 'MSD_3',
-                    'mode': 'input'
-                },
-                13: {
-                    'name': 'bin_dose_exp_0',
-                    'mode': 'input'
-                },
-                14: {
-                    'name': 'bin_dose_exp_1',
-                    'mode': 'input'
-                },
-                15: {
-                    'name': 'bin_dose_exp_2',
-                    'mode': 'input'
-                }
-            }
+        "moving": {
+          "name": "moving",
+          "mode": "output",
+          "init": False,
+          "pin_num": 11,
+          "socket": 14
         },
-        'bus2': {
-            'slot': 8,
-            'address': 0x25,
-            'pins': {
-                0: {
-                    'name': 'binary_divisor_exponent_0',
-                    'mode': 'output',
-                    'init': False
-                },
-                1: {
-                    'name': 'binary_divisor_exponent_1',
-                    'mode': 'output',
-                    'init': False
-                },
-                2: {
-                    'name': 'binary_divisor_exponent_2',
-                    'mode': 'output',
-                    'init': False
-                },
-                3: {
-                    'name': 'bcd_divisor_exponent_lsd_0',
-                    'mode': 'output',
-                    'init': False
-                },
-                4: {
-                    'name': 'bcd_divisor_exponent_lsd_1',
-                    'mode': 'output',
-                    'init': False
-                },
-                5: {
-                    'name': 'bcd_divisor_exponent_lsd_2',
-                    'mode': 'output',
-                    'init': False
-                },
-                6: {
-                    'name': 'bcd_divisor_exponent_lsd_3',
-                    'mode': 'output',
-                    'init': False
-                },
-                7: {
-                    'name': 'bcd_divisor_exponent_2nd_lsd_0',
-                    'mode': 'output',
-                    'init': False
-                },
-                8: {
-                    'name': 'bcd_divisor_exponent_2nd_lsd_1',
-                    'mode': 'output',
-                    'init': False
-                },
-                9: {
-                    'name': 'bcd_divisor_exponent_2nd_lsd_2',
-                    'mode': 'output',
-                    'init': False
-                },
-                10: {
-                    'name': 'bcd_divisor_exponent_2nd_lsd_3',
-                    'mode': 'output',
-                    'init': False
-                },
-                11: {
-                    'name': 'bcd_divisor_exponent_msd_0',
-                    'mode': 'output',
-                    'init': False
-                },
-                12: {
-                    'name': 'bcd_divisor_exponent_msd_1',
-                    'mode': 'output',
-                    'init': False
-                },
-                13: {
-                    'name': 'bcd_divisor_exponent_msd_2',
-                    'mode': 'output',
-                    'init': False
-                },
-                14: {
-                    'name': 'bcd_divisor_exponent_msd_3',
-                    'mode': 'output',
-                    'init': False
-                },
-
-            }
-        }
-    },
-    'board4': {
-        'bus1': {
-            'slot': 9,
-            'address': 0x26,
-            'pins': {
-                12: {
-                    'name': 'bin_cur_range_0',
-                    'mode': 'input'
-                },
-                13: {
-                    'name': 'bin_cur_range_1',
-                    'mode': 'input'
-                },
-                14: {
-                    'name': 'bin_cur_range_2',
-                    'mode': 'input'
-                },
-                15: {
-                    'name': 'bin_cur_range_3',
-                    'mode': 'input'
-                }
-            }
+        "locked": {
+          "name": "locked",
+          "mode": "output",
+          "init": False,
+          "pin_num": 12,
+          "socket": 16
         },
-        'bus2': {
-            'slot': 9,
-            'address': 0x27,
-            'pins': {
-
-            }
+        "stop": {
+          "name": "stop",
+          "mode": "output",
+          "init": False,
+          "pin_num": 0,
+          "socket": 1
+        },
+        "stop_flashing": {
+          "name": "stop_flashing",
+          "mode": "output",
+          "init": False,
+          "pin_num": 1,
+          "socket": 2
+        },
+        "hold": {
+          "name": "hold",
+          "mode": "output",
+          "init": False,
+          "pin_num": 2,
+          "socket": 3
+        },
+        "hold_flashing": {
+          "name": "hold_flashing",
+          "mode": "output",
+          "init": False,
+          "pin_num": 3,
+          "socket": 4
+        },
+        "in_process": {
+          "name": "in_process",
+          "mode": "output",
+          "init": False,
+          "pin_num": 4,
+          "socket": 6
+        },
+        "in_process_flashing": {
+          "name": "in_process_flashing",
+          "mode": "output",
+          "init": False,
+          "pin_num": 5,
+          "socket": 7
+        },
+        "alarm": {
+          "name": "alarm",
+          "mode": "output",
+          "init": False,
+          "pin_num": 6,
+          "socket": 8
+        },
+        "alarm_flashing": {
+          "name": "alarm_flashing",
+          "mode": "output",
+          "init": False,
+          "pin_num": 7,
+          "socket": 9
+        },
+        "complete": {
+          "name": "complete",
+          "mode": "output",
+          "init": False,
+          "pin_num": 8,
+          "socket": 11
+        },
+        "complete_flashing": {
+          "name": "complete_flashing",
+          "mode": "output",
+          "init": False,
+          "pin_num": 9,
+          "socket": 12
         }
+      }
     }
+  },
+  "board2": {
+    "bus1": {
+      "slot": 7,
+      "address": 34,
+      "pins": {
+        "LSD_0": {
+          "name": "LSD_0",
+          "mode": "input",
+          "pin_num": 1,
+          "socket": "B"
+        },
+        "LSD_1": {
+          "name": "LSD_1",
+          "mode": "input",
+          "pin_num": 2,
+          "socket": "C"
+        },
+        "LSD_2": {
+          "name": "LSD_2",
+          "mode": "input",
+          "pin_num": 3,
+          "socket": "D"
+        },
+        "LSD_3": {
+          "name": "LSD_3",
+          "mode": "input",
+          "pin_num": 0,
+          "socket": "A"
+        },
+        "MSD_0": {
+          "name": "MSD_0",
+          "mode": "input",
+          "pin_num": 5,
+          "socket": "H"
+        },
+        "MSD_1": {
+          "name": "MSD_1",
+          "mode": "input",
+          "pin_num": 6,
+          "socket": "J"
+        },
+        "MSD_2": {
+          "name": "MSD_2",
+          "mode": "input",
+          "pin_num": 4,
+          "socket": "F"
+        }
+      }
+    },
+    "bus2": {
+      "slot": 7,
+      "address": 35,
+      "pins": {
+        "auto_implant": {
+          "name": "auto_implant",
+          "mode": "output",
+          "init": False,
+          "pin_num": 3,
+          "socket": 4
+        },
+        "command_violate": {
+          "name": "command_violate",
+          "mode": "output",
+          "init": False,
+          "pin_num": 5,
+          "socket": 9
+        },
+        "extend(0)": {
+          "name": "extend(0)",
+          "mode": "output",
+          "init": False,
+          "pin_num": 0,
+          "socket": 1
+        },
+        "retract(0)": {
+          "name": "retract(0)",
+          "mode": "output",
+          "init": False,
+          "pin_num": 1,
+          "socket": 2
+        },
+        "go_to_load(0)": {
+          "name": "go_to_load(0)",
+          "mode": "output",
+          "init": False,
+          "pin_num": 2,
+          "socket": 3
+        },
+        "run(0)": {
+          "name": "run(0)",
+          "mode": "output",
+          "init": False,
+          "pin_num": 4,
+          "socket": 6
+        },
+        "bcd_percent_complete_lsd_0": {
+          "name": "bcd_percent_complete_lsd_0",
+          "mode": "output",
+          "init": False,
+          "pin_num": 6,
+          "socket": 11
+        },
+        "bcd_percent_complete_lsd_1": {
+          "name": "bcd_percent_complete_lsd_1",
+          "mode": "output",
+          "init": False,
+          "pin_num": 7,
+          "socket": 12
+        },
+        "bcd_percent_complete_lsd_2": {
+          "name": "bcd_percent_complete_lsd_0",
+          "mode": "output",
+          "init": False,
+          "pin_num": 8,
+          "socket": 13
+        },
+        "bcd_percent_complete_lsd_3": {
+          "name": "bcd_percent_complete_lsd_1",
+          "mode": "output",
+          "init": False,
+          "pin_num": 9,
+          "socket": 14
+        },
+        "bcd_percent_complete_msd_0": {
+          "name": "bcd_percent_complete_msd_0",
+          "mode": "output",
+          "init": False,
+          "pin_num": 10,
+          "socket": 16
+        },
+        "bcd_percent_complete_msd_1": {
+          "name": "bcd_percent_complete_msd_1",
+          "mode": "output",
+          "init": False,
+          "pin_num": 11,
+          "socket": 17
+        },
+        "bcd_percent_complete_msd_2": {
+          "name": "bcd_percent_complete_msd_2",
+          "mode": "output",
+          "init": False,
+          "pin_num": 12,
+          "socket": 18
+        },
+        "bcd_percent_complete_msd_3": {
+          "name": "bcd_percent_complete_msd_3",
+          "mode": "output",
+          "init": False,
+          "pin_num": 13,
+          "socket": 19
+        }
+      }
+    }
+  },
+  "board3": {
+    "bus1": {
+      "slot": 8,
+      "address": 36,
+      "pins": {
+        "LSD_0": {
+          "name": "LSD_0",
+          "mode": "input",
+          "pin_num": 0,
+          "socket": "A"
+        },
+        "LSD_1": {
+          "name": "LSD_1",
+          "mode": "input",
+          "pin_num": 1,
+          "socket": "B"
+        },
+        "LSD_2": {
+          "name": "LSD_2",
+          "mode": "input",
+          "pin_num": 2,
+          "socket": "C"
+        },
+        "LSD_3": {
+          "name": "LSD_3",
+          "mode": "input",
+          "pin_num": 3,
+          "socket": "D"
+        },
+        "LSD2_0": {
+          "name": "LSD2_0",
+          "mode": "input",
+          "pin_num": 4,
+          "socket": "F"
+        },
+        "LSD2_1": {
+          "name": "LSD2_1",
+          "mode": "input",
+          "pin_num": 5,
+          "socket": "H"
+        },
+        "LSD2_2": {
+          "name": "LSD2_2",
+          "mode": "input",
+          "pin_num": 6,
+          "socket": "J"
+        },
+        "LSD2_3": {
+          "name": "LSD2_3",
+          "mode": "input",
+          "pin_num": 7,
+          "socket": "K"
+        },
+        "MSD_0": {
+          "name": "MSD_0",
+          "mode": "input",
+          "pin_num": 8,
+          "socket": "M"
+        },
+        "MSD_1": {
+          "name": "MSD_1",
+          "mode": "input",
+          "pin_num": 9,
+          "socket": "N"
+        },
+        "MSD_2": {
+          "name": "MSD_2",
+          "mode": "input",
+          "pin_num": 10,
+          "socket": "P"
+        },
+        "MSD_3": {
+          "name": "MSD_3",
+          "mode": "input",
+          "pin_num": 11,
+          "socket": "R"
+        },
+        "bin_dose_exp_0": {
+          "name": "bin_dose_exp_0",
+          "mode": "input",
+          "pin_num": 12,
+          "socket": "T"
+        },
+        "bin_dose_exp_1": {
+          "name": "bin_dose_exp_1",
+          "mode": "input",
+          "pin_num": 13,
+          "socket": "U"
+        },
+        "bin_dose_exp_2": {
+          "name": "bin_dose_exp_2",
+          "mode": "input",
+          "pin_num": 14,
+          "socket": "V"
+        }
+      }
+    },
+    "bus2": {
+      "slot": 8,
+      "address": 37,
+      "pins": {
+        "binary_divisor_exponent_0": {
+          "name": "binary_divisor_exponent_0",
+          "mode": "output",
+          "init": False,
+          "pin_num": 14,
+          "socket": 18
+        },
+        "binary_divisor_exponent_1": {
+          "name": "binary_divisor_exponent_1",
+          "mode": "output",
+          "init": False,
+          "pin_num": 13,
+          "socket": 17
+        },
+        "binary_divisor_exponent_2": {
+          "name": "binary_divisor_exponent_2",
+          "mode": "output",
+          "init": False,
+          "pin_num": 12,
+          "socket": 16
+        },
+        "bcd_divisor_exponent_lsd_0": {
+          "name": "bcd_divisor_exponent_lsd_0",
+          "mode": "output",
+          "init": False,
+          "pin_num": 0,
+          "socket": 1
+        },
+        "bcd_divisor_exponent_lsd_1": {
+          "name": "bcd_divisor_exponent_lsd_1",
+          "mode": "output",
+          "init": False,
+          "pin_num": 1,
+          "socket": 2
+        },
+        "bcd_divisor_exponent_lsd_2": {
+          "name": "bcd_divisor_exponent_lsd_2",
+          "mode": "output",
+          "init": False,
+          "pin_num": 2,
+          "socket": 3
+        },
+        "bcd_divisor_exponent_lsd_3": {
+          "name": "bcd_divisor_exponent_lsd_3",
+          "mode": "output",
+          "init": False,
+          "pin_num": 3,
+          "socket": 4
+        },
+        "bcd_divisor_exponent_2nd_lsd_0": {
+          "name": "bcd_divisor_exponent_2nd_lsd_0",
+          "mode": "output",
+          "init": False,
+          "pin_num": 4,
+          "socket": 6
+        },
+        "bcd_divisor_exponent_2nd_lsd_1": {
+          "name": "bcd_divisor_exponent_2nd_lsd_1",
+          "mode": "output",
+          "init": False,
+          "pin_num": 5,
+          "socket": 7
+        },
+        "bcd_divisor_exponent_2nd_lsd_2": {
+          "name": "bcd_divisor_exponent_2nd_lsd_2",
+          "mode": "output",
+          "init": False,
+          "pin_num": 6,
+          "socket": 8
+        },
+        "bcd_divisor_exponent_2nd_lsd_3": {
+          "name": "bcd_divisor_exponent_2nd_lsd_3",
+          "mode": "output",
+          "init": False,
+          "pin_num": 7,
+          "socket": 9
+        },
+        "bcd_divisor_exponent_msd_0": {
+          "name": "bcd_divisor_exponent_msd_0",
+          "mode": "output",
+          "init": False,
+          "pin_num": 8,
+          "socket": 11
+        },
+        "bcd_divisor_exponent_msd_1": {
+          "name": "bcd_divisor_exponent_msd_1",
+          "mode": "output",
+          "init": False,
+          "pin_num": 9,
+          "socket": 12
+        },
+        "bcd_divisor_exponent_msd_2": {
+          "name": "bcd_divisor_exponent_msd_2",
+          "mode": "output",
+          "init": False,
+          "pin_num": 10,
+          "socket": 13
+        },
+        "bcd_divisor_exponent_msd_3": {
+          "name": "bcd_divisor_exponent_msd_3",
+          "mode": "output",
+          "init": False,
+          "pin_num": 11,
+          "socket": 14
+        }
+      }
+    }
+  },
+  "board4": {
+    "bus1": {
+      "slot": 9,
+      "address": 38,
+      "pins": {
+        "bin_cur_range_0": {
+          "name": "bin_cur_range_0",
+          "mode": "input",
+          "pin_num": 0,
+          "socket": "T"
+        },
+        "bin_cur_range_1": {
+          "name": "bin_cur_range_1",
+          "mode": "input",
+          "pin_num": 1,
+          "socket": "U"
+        },
+        "bin_cur_range_2": {
+          "name": "bin_cur_range_2",
+          "mode": "input",
+          "pin_num": 2,
+          "socket": "V"
+        },
+        "bin_cur_range_3": {
+          "name": "bin_cur_range_3",
+          "mode": "input",
+          "pin_num": 3,
+          "socket": "W"
+        }
+      }
+    },
+    "bus2": {
+      "slot": 9,
+      "address": 39,
+      "pins": {}
+    }
+  }
 }
 
-
-def pin_mapper():
-    boards = [1, 2, 3, 4]
-    pin_map = dict()
-
-    for b in boards:
-        bus1 = pins_config['board{}'.format(b)]['bus1']['pins']
-        bus2 = pins_config['board{}'.format(b)]['bus2']['pins']
-        pin_map.update(dict(zip([x['name'] for x in bus1.values()], bus1.keys())))
-        pin_map.update(dict(zip([y['name'] for y in bus2.values()], bus2.keys())))
-
-    return pin_map
+}
