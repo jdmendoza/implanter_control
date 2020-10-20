@@ -240,7 +240,7 @@ class MachineControl:
     def get_binary_dose_exponent(self):
         bde_pins = ['bin_dose_exp_{}'.format(i) for i in range(3)]
 
-        bde = bcd([self.io_board_3_1.mcp.pin(i).value for i in bde_pins])
+        bde = bcd([self.io_board_3_1.pin(i).value for i in bde_pins])
 
         return bde
 

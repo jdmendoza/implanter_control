@@ -1,5 +1,4 @@
 pins_config = {
-   {
   "board1": {
     "bus1": {
       "slot": 6,
@@ -11,59 +10,41 @@ pins_config = {
           "pin_num": 0,
           "socket": "A"
         },
-        "sense_1/2_batch": {
-          "name": "sense_1/2_batch",
-          "mode": "input",
-          "pin_num": 2,
-          "socket": "C"
-        },
         "mode_sense": {
           "name": "mode_sense",
           "mode": "input",
-          "pin_num": 3,
+          "pin_num": 2,
           "socket": "D"
         },
         "not_load_position_sense": {
           "name": "not_load_position_sense",
           "mode": "input",
-          "pin_num": 7,
+          "pin_num": 6,
           "socket": "M"
         },
         "load_position_sense": {
           "name": "load_position_sense",
           "mode": "input",
-          "pin_num": 8,
+          "pin_num": 7,
           "socket": "N"
         },
         "load_unload_sense": {
           "name": "load_unload_sense",
           "mode": "input",
-          "pin_num": 12,
+          "pin_num": 9,
           "socket": "U"
         },
         "implant_angle_sense": {
           "name": "implant_angle_sense",
           "mode": "input",
-          "pin_num": 13,
+          "pin_num": 10,
           "socket": "V"
         },
         "run_speed_error": {
           "name": "run_speed_error",
           "mode": "input",
-          "pin_num": 9,
+          "pin_num": 8,
           "socket": "P"
-        },
-        "search_speed_error": {
-          "name": "search_speed_error",
-          "mode": "input",
-          "pin_num": 10,
-          "socket": "R"
-        },
-        "position_error": {
-          "name": "position_error",
-          "mode": "input",
-          "pin_num": 11,
-          "socket": "T"
         },
         "interlock": {
           "name": "interlock",
@@ -74,19 +55,19 @@ pins_config = {
         "stop": {
           "name": "stop",
           "mode": "input",
-          "pin_num": 4,
+          "pin_num": 3,
           "socket": "F"
         },
         "start": {
           "name": "start",
           "mode": "input",
-          "pin_num": 5,
+          "pin_num": 4,
           "socket": "H"
         },
         "hold": {
           "name": "hold",
           "mode": "input",
-          "pin_num": 6,
+          "pin_num": 5,
           "socket": "J"
         }
       }
@@ -101,20 +82,6 @@ pins_config = {
           "init": False,
           "pin_num": 10,
           "socket": 13
-        },
-        "moving": {
-          "name": "moving",
-          "mode": "output",
-          "init": False,
-          "pin_num": 11,
-          "socket": 14
-        },
-        "locked": {
-          "name": "locked",
-          "mode": "output",
-          "init": False,
-          "pin_num": 12,
-          "socket": 16
         },
         "stop": {
           "name": "stop",
@@ -591,4 +558,4 @@ pins_config = {
   }
 }
 
-}
+
