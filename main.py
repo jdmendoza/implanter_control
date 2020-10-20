@@ -273,8 +273,8 @@ class MachineControl:
 
     def send_bcd_divisor(self, value):
         msd_pin = ['binary_divisor_exponent_{}'.format(i) for i in range(3)] 
-        lsd_pin = ['bcd_divisor_exponent_lsd_{}'.format(i) for range(4)] 
-        lsd_2_pin = ['bcd_divisor_exponent_2nd_lsd_{}'.format(i) in range(4)]
+        lsd_pin = ['bcd_divisor_exponent_lsd_{}'.format(i) for i in range(4)] 
+        lsd_2_pin = ['bcd_divisor_exponent_2nd_lsd_{}'.format(i) for i in range(4)]
 
         msd_bin = to_binary(value)
         value /= 10
@@ -313,8 +313,8 @@ class MachineControl:
         return True
 
     def send_bcd_percent_complete(self, completions, traversals):
-        msd_pin = ['bcd_percent_complete_msd_{}'.format(i) for range(4)]
-        lsd_pin = ['bcd_percent_complete_lsd_{}'.format(i) for range(4)]
+        msd_pin = ['bcd_percent_complete_msd_{}'.format(i) for i in range(4)]
+        lsd_pin = ['bcd_percent_complete_lsd_{}'.format(i) for i in range(4)]
 
         value = round(completions / (2 * traversals), 1)
         logging.info('Sending percent complete ({}%) to outputs'.format(value))

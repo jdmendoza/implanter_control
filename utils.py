@@ -24,16 +24,16 @@ class GpioExpander:
 
         for pin_name in self.pin_defs.keys():
             if self.pin_defs[pin_name]['mode'] == 'input':
-                self.mcp.get_pin(pin_num).direction = digitalio.Direction.INPUT
-                logging.info('Pin {} set to {}'.format(pin_num, self.pin_defs[pin_num]['mode']))
+                self.pin(pin_name).direction = digitalio.Direction.INPUT
+                #logging.info('Pin {} set to {}'.format(pin_num, self.pin_defs[pin_num]['mode']))
 
-            elif self.pin_defs[pin_num]['mode'] == 'output':
-                self.mcp.get_pin(pin_num).switch_to_output(value=self.pin_defs[pin_num]['init'])
-                logging.info('Pin {} set to {}'.format(pin_num, self.pin_defs[pin_num]['mode']))
+            elif self.pin_defs[pin_name]['mode'] == 'output':
+                self.pin(pin_name).switch_to_output(value=self.pin_defs[pin_name]['init'])
+                #logging.info('Pin {} set to {}'.format(pin_num, self.pin_defs[pin_num]['mode']))
 
             else:
-                logging.error('Error, no direction defined for pin {} \n \t {}'
-                              .format(pin_num, self.pin_defs[pin_num]))
+                logging.error('Error, no direction defined for pin {}, pin_defs: {}'
+                              .format(pin_name, pin_defs[pin_name]))
 
 
 def bcd(array):
@@ -56,3 +56,6 @@ def to_bcd(board, tuples):
         else:
             board.mcp.pin(i).value = False
     return True
+
+if __name__ == "__main__":
+    im = MachineControl()
