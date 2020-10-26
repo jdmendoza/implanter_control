@@ -1,6 +1,7 @@
 import logging
 from adafruit_mcp230xx.mcp23017 import MCP23017
 import digitalio
+from tabulate import tabulate
 
 
 class GpioExpander:
@@ -9,10 +10,20 @@ class GpioExpander:
         self.pin_defs = definitions['pins']
         self.initialize_pins()
 
-    def pin_info(self, pin):
-        logging.info('Pin {} details'.format(pin))
-        logging.info(self.pin_defs[pin])
-        logging.info(self.mcp.get_pin(pin))
+    def viewer(self):
+        """
+        Returns all the pin values for a board. 
+        """
+        output = []
+        for pin_name in self.pin_defs:
+            details = self.pin_defs[pin_name]
+            value = self.pin(pin_name).value
+            details['curr_value'] = value
+            output.append(details)
+        output = sorted(output, key=lambda x: x['pin_num'], reverse=False)
+
+        print(tabulate(output, headers="keys"))
+        return
 
     def pin(self, pin_name): # Need to test this
         return self.mcp.get_pin(self.pin_defs[pin_name]['pin_num'])
@@ -33,7 +44,7 @@ class GpioExpander:
 
             else:
                 logging.error('Error, no direction defined for pin {}, pin_defs: {}'
-                              .format(pin_name, pin_defs[pin_name]))
+                              .format(pin_name, self.pin_defs[pin_name]))
 
 
 def bcd(array):
@@ -52,10 +63,7 @@ def to_bcd(board, tuples):
     """
     for i, j in tuples:
         if j:
-            board.mcp.pin(i).value = True
+            board.pin(i).value = True
         else:
-            board.mcp.pin(i).value = False
+            board.pin(i).value = False
     return True
-
-if __name__ == "__main__":
-    im = MachineControl()

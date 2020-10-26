@@ -7,14 +7,15 @@ from utils import GpioExpander, bcd, to_binary, to_bcd
 from waiting import wait
 
 i2c = busio.I2C(board.SCL, board.SDA)
-
+"""
 logging.basicConfig(
     format='%(levelname)-8s %(asctime)s %(message)s',
     level=logging.DEBUG,
     datefmt='%Y-%m-%d %H:%M:%S',
     filename='implater_logger.log',
     filemode='a')
-
+"""
+logging.basicConfig(level=logging.DEBUG)
 
 class MachineControl:
     machine_constant = 410
@@ -35,28 +36,13 @@ class MachineControl:
         """ 
         self.__init__()
 
-    def pin_viewer(self, board_obj):
-        """
-        Returns all the pin values for a board. 
-        """
-        output = []
-        bus = board_obj.pin_defs
-        for pin in bus:
-            output.append((bus[pin]['name'], board_obj.mcp.get_pin(pin).value))
-        
-        return output
-
-
-        bus2 = pins_config['board{}'.format(b)]['bus2']['pins']
-
     def ready_check(self):
         """
-        Checks that the door is closed and that the mode is auto
+        Checks that the mode is auto
         """
         # mode_sense pin -  Auto when pin is low
 
         checks = [
-            self.io_board_1_1.pin('sense_door_closed').value,
             not self.io_board_1_1.pin('mode_sense').value
         ]
 
@@ -70,12 +56,12 @@ class MachineControl:
         """
         logging.info('Entered HOLD routine')
 
-        self.io_board_1_2.pin('auto_beam_gate_pin').value = False  # Which logic is off?
+        self.io_board_1_2.pin('auto_beam_gate').value = False  # Which logic is off?
 
         self.stop_scan()
 
         self.io_board_1_2.pin('hold_flashing').value = False
-        self.io_board_1_2.pin('hold_pin').value = True
+        self.io_board_1_2.pin('hold').value = True
 
         logging.info('Finished HOLD routine \n Waiting for START or STOP')
 
@@ -128,12 +114,13 @@ class MachineControl:
         self.stop_scan()
 
         self.io_board_1_2.pin('hold_flashing').value = True
-        self.io_board_1_2.pin('alarm_pulse').value = True
+        self.io_board_1_2.pin('alarm_flashing').value = True
 
         logging.info('Waiting for hold button to be pressed')
+
         def hold_button():
             while True:
-                if self.io_board_1_2.pin('hold_button').value:
+                if self.io_board_1_1.pin('hold').value:
                     return True
                 else:
                     time.sleep(.1)
@@ -216,8 +203,10 @@ class MachineControl:
         return
 
     def get_traversals(self):
-        lsd_pins = ['LSD_{}' for i in range(3)]
-        msd_pins = ['MSD_{}' for i in range(3)]
+        logging.info('Getting traversals')
+
+        lsd_pins = ['LSD_{}'.format(i) for i in range(3)]
+        msd_pins = ['MSD_{}'.format(i) for i in range(3)]
 
         traversals = 0
         traversals += bcd([self.io_board_2_1.pin(i).value for i in lsd_pins])
@@ -226,9 +215,11 @@ class MachineControl:
         return traversals
 
     def get_dose_mantissa(self):
-        lsd_pins = ['LSD_{}' for i in range(4)] 
-        lsd_2_pins = ['LSD2_{}' for i in range(4)] 
-        msd_pins = ['MSD_{}' for i in range(4)] 
+        logging.info('Getting dose mantissa')
+
+        lsd_pins = ['LSD_{}'.format(i) for i in range(4)] 
+        lsd_2_pins = ['LSD2_{}'.format(i) for i in range(4)] 
+        msd_pins = ['MSD_{}'.format(i) for i in range(4)] 
 
         dose_mantissa = 0
         dose_mantissa += bcd([self.io_board_3_1.pin(i).value for i in lsd_pins]) / 100
@@ -238,6 +229,7 @@ class MachineControl:
         return dose_mantissa
 
     def get_binary_dose_exponent(self):
+        logging.info('Getting binary dose exponent')
         bde_pins = ['bin_dose_exp_{}'.format(i) for i in range(3)]
 
         bde = bcd([self.io_board_3_1.pin(i).value for i in bde_pins])
@@ -245,6 +237,7 @@ class MachineControl:
         return bde
 
     def get_current_range(self):
+        logging.info('Getting current range')
         current_range_pins = ['bin_cur_range_{}'.format(i) for i in range(3)]
 
         curr_range = bcd([self.io_board_4_1.pin(i).value for i in current_range_pins])
@@ -272,9 +265,9 @@ class MachineControl:
         return True
 
     def send_bcd_divisor(self, value):
-        msd_pin = ['binary_divisor_exponent_{}'.format(i) for i in range(3)] 
-        lsd_pin = ['bcd_divisor_exponent_lsd_{}'.format(i) for i in range(4)] 
-        lsd_2_pin = ['bcd_divisor_exponent_2nd_lsd_{}'.format(i) for i in range(4)]
+        msd_pins = ['binary_divisor_exponent_{}'.format(i) for i in range(3)] 
+        lsd_pins = ['bcd_divisor_exponent_lsd_{}'.format(i) for i in range(4)] 
+        lsd_2_pins = ['bcd_divisor_exponent_2nd_lsd_{}'.format(i) for i in range(4)]
 
         msd_bin = to_binary(value)
         value /= 10
@@ -285,9 +278,9 @@ class MachineControl:
         logging.info('Sending bcd divisor {} dec, \n\t {} msd_bin \n\t {} lsd_bin \n\t {} lsd_2_bin'
                      .format(value, msd_bin, lsd_bin, lsd_2_bin))
 
-        to_bcd(self.io_board_3_2, zip(msd_pin, msd_bin))
-        to_bcd(self.io_board_3_2, zip(lsd_pin, lsd_bin))
-        to_bcd(self.io_board_3_2, zip(lsd_2_pin, lsd_2_bin))
+        to_bcd(self.io_board_3_2, zip(msd_pins, msd_bin))
+        to_bcd(self.io_board_3_2, zip(lsd_pins, lsd_bin))
+        to_bcd(self.io_board_3_2, zip(lsd_2_pins, lsd_2_bin))
 
         return True
 
@@ -334,8 +327,8 @@ class MachineControl:
         def is_at_zero_position():
             return self.io_board_1_1.pin('load_position_sense').value
 
-        self.io_board_1_1.pin('go_to_load(0)').value = True
-        self.io_board_1_1.pin('retract(0)').value = True
+        self.io_board_2_2.pin('go_to_load(0)').value = True
+        self.io_board_2_2.pin('retract(0)').value = True
 
         while True:
             if is_at_zero_position():
@@ -367,10 +360,14 @@ class MachineControl:
 
     def stop_scan(self):
 
-        self.io_board_1_1.pin('extend(0)').value = False
-        self.io_board_1_1.pin('retract(0)').value = False
+        self.io_board_2_2.pin('extend(0)').value = False
+        self.io_board_2_2.pin('retract(0)').value = False
 
         return True
 
     def implant_angle_sense(self):
         return self.io_board_1_1.pin('angle_implant').value
+
+if __name__ == "__main__":
+    implanter = MachineControl()
+    implanter.io_board_1_1.viewer()
