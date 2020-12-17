@@ -48,12 +48,15 @@ class GpioExpander:
 
 
 def bcd(array):
-    array = [1 if i else 0 for i in array]
+    # Flips the logic due to optocoupler active low
+    array = [0 if i else 1 for i in array]
+    print('0b' + ''.join([str(i) for i in array]))
     return int('0b' + ''.join([str(i) for i in array]), base=2)
 
 
 def to_binary(dec):
-    bin_str = '{0:0b}'.format(int(dec))
+    bin_str = format(int(dec), '04b')
+    bin_str = ''.join('1' if x == '0' else '0' for x in bin_str) # Flip bits
     return map(int, list(bin_str))
 
 
@@ -62,8 +65,8 @@ def to_bcd(board, tuples):
     This function is used to control groups of pins that represent a bcd.
     """
     for i, j in tuples:
-        if j:
-            board.pin(i).value = True
+        if i:
+            board.pin(j).value = True
         else:
-            board.pin(i).value = False
+            board.pin(j).value = False
     return True

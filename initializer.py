@@ -79,35 +79,35 @@ pins_config = {
         "auto_beam_gate": {
           "name": "auto_beam_gate",
           "mode": "output",
-          "init": False,
+          "init": True,
           "pin_num": 10,
           "socket": 13
         },
         "stop": {
           "name": "stop",
           "mode": "output",
-          "init": False,
+          "init": True,
           "pin_num": 0,
           "socket": 1
         },
         "stop_flashing": {
           "name": "stop_flashing",
           "mode": "output",
-          "init": False,
+          "init": True,
           "pin_num": 1,
           "socket": 2
         },
         "hold": {
           "name": "hold",
           "mode": "output",
-          "init": False,
+          "init": True,
           "pin_num": 2,
           "socket": 3
         },
         "hold_flashing": {
           "name": "hold_flashing",
           "mode": "output",
-          "init": False,
+          "init": True,
           "pin_num": 3,
           "socket": 4
         },
@@ -142,14 +142,14 @@ pins_config = {
         "complete": {
           "name": "complete",
           "mode": "output",
-          "init": False,
+          "init": True,
           "pin_num": 8,
           "socket": 11
         },
         "complete_flashing": {
           "name": "complete_flashing",
           "mode": "output",
-          "init": False,
+          "init": True,
           "pin_num": 9,
           "socket": 12
         }
@@ -266,14 +266,14 @@ pins_config = {
           "socket": 12
         },
         "bcd_percent_complete_lsd_2": {
-          "name": "bcd_percent_complete_lsd_0",
+          "name": "bcd_percent_complete_lsd_2",
           "mode": "output",
           "init": False,
           "pin_num": 8,
           "socket": 13
         },
         "bcd_percent_complete_lsd_3": {
-          "name": "bcd_percent_complete_lsd_1",
+          "name": "bcd_percent_complete_lsd_3",
           "mode": "output",
           "init": False,
           "pin_num": 9,

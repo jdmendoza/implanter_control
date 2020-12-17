@@ -1,3 +1,4 @@
+import sys
 import logging
 import time
 import busio
@@ -7,15 +8,13 @@ from utils import GpioExpander, bcd, to_binary, to_bcd
 from waiting import wait
 
 i2c = busio.I2C(board.SCL, board.SDA)
-"""
+
 logging.basicConfig(
+    stream=sys.stdout,
     format='%(levelname)-8s %(asctime)s %(message)s',
     level=logging.DEBUG,
-    datefmt='%Y-%m-%d %H:%M:%S',
-    filename='implater_logger.log',
-    filemode='a')
-"""
-logging.basicConfig(level=logging.DEBUG)
+    datefmt='%Y-%m-%d %H:%M:%S'
+    )
 
 class MachineControl:
     machine_constant = 410
@@ -151,7 +150,7 @@ class MachineControl:
                     traversals = self.get_traversals()
 
                     completion = 0
-                    self.io_board_2_2.pin('run').value = True  # Start up the motor
+                    self.io_board_2_2.pin('run(0)').value = True  # Start up the motor
                     time.sleep(30)  # Wait for motor to come up
 
                     wait(self.es_to_zero_position, timeout_seconds=10)  # Get the end station to the zero position
@@ -203,23 +202,23 @@ class MachineControl:
         return
 
     def get_traversals(self):
-        logging.info('Getting traversals')
 
-        lsd_pins = ['LSD_{}'.format(i) for i in range(3)]
-        msd_pins = ['MSD_{}'.format(i) for i in range(3)]
+        lsd_pins = ['LSD_{}'.format(i) for i in reversed(range(4))]
+        msd_pins = ['MSD_{}'.format(i) for i in reversed(range(3))]
 
         traversals = 0
         traversals += bcd([self.io_board_2_1.pin(i).value for i in lsd_pins])
         traversals += bcd([self.io_board_2_1.pin(i).value for i in msd_pins]) * 10
-
-        return traversals
+        logging.info('# of traversals: ', traversals)
+        
+        return traversals 
 
     def get_dose_mantissa(self):
         logging.info('Getting dose mantissa')
 
-        lsd_pins = ['LSD_{}'.format(i) for i in range(4)] 
-        lsd_2_pins = ['LSD2_{}'.format(i) for i in range(4)] 
-        msd_pins = ['MSD_{}'.format(i) for i in range(4)] 
+        lsd_pins = ['LSD_{}'.format(i) for i in reversed(range(4))] 
+        lsd_2_pins = ['LSD2_{}'.format(i) for i in reversed(range(4))] 
+        msd_pins = ['MSD_{}'.format(i) for i in reversed(range(4))] 
 
         dose_mantissa = 0
         dose_mantissa += bcd([self.io_board_3_1.pin(i).value for i in lsd_pins]) / 100
@@ -230,7 +229,7 @@ class MachineControl:
 
     def get_binary_dose_exponent(self):
         logging.info('Getting binary dose exponent')
-        bde_pins = ['bin_dose_exp_{}'.format(i) for i in range(3)]
+        bde_pins = ['bin_dose_exp_{}'.format(i) for i in reversed(range(3))]
 
         bde = bcd([self.io_board_3_1.pin(i).value for i in bde_pins])
 
@@ -238,7 +237,7 @@ class MachineControl:
 
     def get_current_range(self):
         logging.info('Getting current range')
-        current_range_pins = ['bin_cur_range_{}'.format(i) for i in range(3)]
+        current_range_pins = ['bin_cur_range_{}'.format(i) for i in reversed(range(4))]
 
         curr_range = bcd([self.io_board_4_1.pin(i).value for i in current_range_pins])
 
@@ -306,15 +305,16 @@ class MachineControl:
         return True
 
     def send_bcd_percent_complete(self, completions, traversals):
-        msd_pin = ['bcd_percent_complete_msd_{}'.format(i) for i in range(4)]
-        lsd_pin = ['bcd_percent_complete_lsd_{}'.format(i) for i in range(4)]
+        msd_pin = ['bcd_percent_complete_msd_{}'.format(i) for i in reversed(range(4))]
+        lsd_pin = ['bcd_percent_complete_lsd_{}'.format(i) for i in reversed(range(4))]
 
-        value = round(completions / (2 * traversals), 1)
+        value = round(completions / (2 * traversals), 1) * 100
         logging.info('Sending percent complete ({}%) to outputs'.format(value))
-
-        pc_msd_bin = to_binary(int(value))
+        pc_lsd_bin = to_binary(int(value % 10))
+        print(pc_lsd_bin)
         value /= 10
-        pc_lsd_bin = to_binary(int(value))
+        pc_msd_bin = to_binary(int(value))
+        print(pc_msd_bin)
 
         to_bcd(self.io_board_2_2, zip(pc_msd_bin, msd_pin))
         to_bcd(self.io_board_2_2, zip(pc_lsd_bin, lsd_pin))
@@ -359,7 +359,6 @@ class MachineControl:
                 time.sleep(0.1)
 
     def stop_scan(self):
-
         self.io_board_2_2.pin('extend(0)').value = False
         self.io_board_2_2.pin('retract(0)').value = False
 
@@ -370,4 +369,7 @@ class MachineControl:
 
 if __name__ == "__main__":
     implanter = MachineControl()
-    implanter.io_board_1_1.viewer()
+    implanter.io_board_1_2.pin('alarm').value = False
+    implanter.send_bcd_percent_complete(5, 5)
+    time.sleep(1)
+    implanter.io_board_2_2.viewer()
