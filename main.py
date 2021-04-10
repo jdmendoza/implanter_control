@@ -125,7 +125,7 @@ class MachineControl:
 
         def hold_button():
             while True:
-                if self.io_board_1_1.pin('hold').value:
+                if not self.io_board_1_1.pin('hold').value:
                     return True
                 else:
                     time.sleep(.1)
@@ -157,7 +157,7 @@ class MachineControl:
 
                     completion = 0
                     # Start up the motor
-                    self.io_board_2_2.pin('run').value = True  
+                    self.io_board_2_2.pin('run(0)').value = True  
                     # Wait for motor to come up
                     time.sleep(10)  
 
@@ -179,7 +179,7 @@ class MachineControl:
                         completion += 1
                     
                         t = 60 * 60 # 1 hour
-                        wait(self.extend_to_end(), timeout_seconds=t)
+                        wait(self.extend_to_end(), timeout_seconds=t) # What is locking out extend
                         wait(self.es_to_zero_position(), timeout_seconds=t)
 
                         """
@@ -222,7 +222,7 @@ class MachineControl:
         traversals = 0
         traversals += bcd([self.io_board_2_1.pin(i).value for i in lsd_pins])
         traversals += bcd([self.io_board_2_1.pin(i).value for i in msd_pins]) * 10
-        logging.info('# of traversals: ', traversals)
+        #logging.info('# of traversals: ', traversals)
         
         return traversals 
 
@@ -243,7 +243,7 @@ class MachineControl:
     def get_binary_dose_exponent(self):
         logging.info('Getting binary dose exponent')
         bde_pins = ['bin_dose_exp_{}'.format(i) for i in reversed(range(3))]
-
+        print('BDE BCD Binaries')
         bde = bcd([self.io_board_3_1.pin(i).value for i in bde_pins])
 
         return bde
@@ -257,20 +257,27 @@ class MachineControl:
         return int(curr_range / 2)
 
     def calc_send_divisor_mantissa(self):
-        dose_mantissa = self.get_dose_mantissa()
-        traversals = self.get_traversals()
+        dose_mantissa = self.get_dose_mantissa() # working
+        print('dose_mantissa', dose_mantissa)
+        traversals = self.get_traversals() # not working
+        # 0b0110 0b100 traversals: 46 should be 5
+        # 0b0110 0b100 traversals: 46 should be 8
+        # Not sure why it's not reading the traversals
+        print('traversals:', traversals)
         divisor_mantissa = dose_mantissa * self.machine_constant / (2 * traversals)
+        print('divisor_mantissa:', divisor_mantissa)
         divisor_mantissa_exp = 0
 
         while divisor_mantissa > 9.99:  # This may have be applied to the divisor mantissa
             divisor_mantissa_exp += 1
             divisor_mantissa /= 10
-
-        i = self.get_current_range()
-        dbe = self.get_binary_dose_exponent()
-
+        print('divisor_mantissa_exp:', divisor_mantissa_exp)
+        i = self.get_current_range() # Current range
+        print('i:', i)
+        dbe = self.get_binary_dose_exponent() # Most significant bit not changing
+        print('dbe:',dbe)
         divisor_exponent = divisor_mantissa_exp + i + dbe - 1
-
+        print('divisor_exponent',divisor_exponent)
         self.send_binary_divisor(divisor_mantissa)
         self.send_binary_divisor_exponent(divisor_exponent)
 
@@ -310,9 +317,9 @@ class MachineControl:
 
     def send_binary_divisor(self, value):
         out_pins = [0, 1, 2]
-
         out_bin = to_binary(int(value))
-        logging.info('Sending binary divisor: {} dec, {} bin'.format(value, out_bin))
+
+        logging.info('Sending binary divisor: {} dec, {} bin'.format(value, list(out_bin)))
         to_bcd(self.io_board_3_2, zip(out_pins, out_bin))
 
         return True
@@ -388,8 +395,8 @@ class MachineControl:
                 time.sleep(0.1)
 
     def stop_scan(self):
-        self.io_board_2_2.pin('extend(0)').value = False
-        self.io_board_2_2.pin('retract(0)').value = False
+        self.io_board_2_2.pin('extend(0)').value = True
+        self.io_board_2_2.pin('retract(0)').value = True
 
         return True
 
@@ -399,6 +406,4 @@ class MachineControl:
 if __name__ == "__main__":
     implanter = MachineControl()
     implanter.io_board_1_2.pin('alarm').value = False
-    implanter.send_bcd_percent_complete(5, 5)
-    time.sleep(1)
-    implanter.io_board_2_2.viewer()
+ 

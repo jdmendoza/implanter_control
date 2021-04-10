@@ -79,21 +79,21 @@ pins_config = {
         "auto_beam_gate": {
           "name": "auto_beam_gate",
           "mode": "output",
-          "init": True,
+          "init": False,
           "pin_num": 10,
           "socket": 13
         },
         "stop": {
           "name": "stop",
           "mode": "output",
-          "init": True,
+          "init": False,
           "pin_num": 0,
           "socket": 1
         },
         "stop_flashing": {
           "name": "stop_flashing",
           "mode": "output",
-          "init": True,
+          "init": False,
           "pin_num": 1,
           "socket": 2
         },
@@ -114,14 +114,14 @@ pins_config = {
         "in_process": {
           "name": "in_process",
           "mode": "output",
-          "init": False,
+          "init": True,
           "pin_num": 4,
           "socket": 6
         },
         "in_process_flashing": {
           "name": "in_process_flashing",
           "mode": "output",
-          "init": False,
+          "init": True,
           "pin_num": 5,
           "socket": 7
         },
@@ -226,7 +226,7 @@ pins_config = {
         "extend(0)": {
           "name": "extend(0)",
           "mode": "output",
-          "init": False,
+          "init": True,
           "pin_num": 0,
           "socket": 1
         },
@@ -247,7 +247,7 @@ pins_config = {
         "run(0)": {
           "name": "run(0)",
           "mode": "output",
-          "init": False,
+          "init": True,
           "pin_num": 4,
           "socket": 6
         },
