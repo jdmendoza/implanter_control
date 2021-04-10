@@ -17,7 +17,7 @@ logging.basicConfig(
     )
 
 class MachineControl:
-    machine_constant = 410
+    machine_constant = 410 # 410 for 4inch, 343 for 3inch, 8inch 510 
 
     def __init__(self):
         self.io_board_1_1 = GpioExpander(i2c, **pins_config['board1']['bus1'])  # slot 6 input
@@ -37,9 +37,10 @@ class MachineControl:
 
     def ready_check(self):
         """
-        Checks that the mode is auto
+        Checks that the door is closed and that the mode is auto
+
+        mode_sense pin -  Auto active when LOW
         """
-        # mode_sense pin -  Auto when pin is low
 
         checks = [
             not self.io_board_1_1.pin('mode_sense').value
@@ -56,7 +57,7 @@ class MachineControl:
         logging.info('Entered HOLD routine')
 
         self.io_board_1_2.pin('auto_beam_gate').value = False  # Which logic is off?
-
+        
         self.stop_scan()
 
         self.io_board_1_2.pin('hold_flashing').value = False
@@ -65,12 +66,17 @@ class MachineControl:
         logging.info('Finished HOLD routine \n Waiting for START or STOP')
 
         while True:
-            if self.io_board_1_1.pin('start').value:  # wait for start before returning to the main program
+            # wait for start before returning to the main program
+            logging.info('Waiting for START button to continue')
+            if self.io_board_1_1.pin('start').value:  
+                
                 return True
 
-            if self.io_board_1_1.pin('stop').value:
+            """
+            if self.io_board_1_1.pin('stop').value: 
                 self.stop_routine()
                 return False
+            """
 
     def stop_routine(self):
         """
@@ -150,42 +156,49 @@ class MachineControl:
                     traversals = self.get_traversals()
 
                     completion = 0
-                    self.io_board_2_2.pin('run(0)').value = True  # Start up the motor
-                    time.sleep(30)  # Wait for motor to come up
+                    # Start up the motor
+                    self.io_board_2_2.pin('run').value = True  
+                    # Wait for motor to come up
+                    time.sleep(10)  
 
-                    wait(self.es_to_zero_position, timeout_seconds=10)  # Get the end station to the zero position
+                    # Get the end station to the zero position
+                    wait(self.es_to_zero_position, timeout_seconds=10)  
                     wait(self.implant_angle_sense, timeout_seconds=10)  # What to do if this errors out
-                    self.io_board_2_2.pin('auto_implant').value = True  # Prepare the auto implant angle
+                    
+                    # Prepare the auto implant angle
+                    self.io_board_2_2.pin('auto_implant').value = True  
                     time.sleep(1)
-                    self.io_board_1_2.pin('auto_beam_gate').value = True  # Open the beam gate
+                    
+                    # Open the beam gate
+                    self.io_board_1_2.pin('auto_beam_gate').value = True   
+                    time.sleep(1) 
 
-                    for traversal in range(traversals):  # Start the cycle
+                    # Start the cycle
+                    for traversal in range(traversals):  
                         logging.info('Starting traversal: {}'.format(traversal))
-
-                        self.io_board_2_2.pin('retract(0)').value = True
                         completion += 1
+                    
+                        t = 60 * 60 # 1 hour
+                        wait(self.extend_to_end(), timeout_seconds=t)
+                        wait(self.es_to_zero_position(), timeout_seconds=t)
 
-                        if not self.io_board_1_1.pin('interlock').value:
+                        """
+                        # Not checking the interlock
+                        if not self.io_board_1_1.pin('interlock').value: # don't check the interlock
                             logging.critical('Issue with interlocks')
                             self.io_board_1_2.pin('alarm').value = True
                             result = self.hold_routine()
                             if not result:
                                 # Do I call reset here?
                                 break
-
-                        if self.io_board_1_1.pin('hold'):
-                            logging.warning('Hold button pressed')
-                            result = self.hold_routine()  # get stuck here until the button is pressed
-                            if not result:  # if they want to stop it while in hold mode
-                                # Do I call reset here?
-                                break
-
-                        if self.io_board_1_1.pin('stop'):
+  
+                        # Not using Stop 
+                        if self.io_board_1_1.pin('stop'): # remove the stop button
                             logging.warning('Stop button pressed')
                             self.stop_routine()
                             break  # Shut off and return to checking for
+                        """
 
-                        self.io_board_1_1.pin('extend(0)').value = True
                         completion += 1
                         self.send_bcd_percent_complete(completion, traversals)
 
@@ -327,16 +340,25 @@ class MachineControl:
         def is_at_zero_position():
             return self.io_board_1_1.pin('load_position_sense').value
 
-        self.io_board_2_2.pin('go_to_load(0)').value = True
-        self.io_board_2_2.pin('retract(0)').value = True
+        self.io_board_1_1.pin('go_to_load(0)').value = False
+        self.io_board_1_1.pin('retract(0)').value = False
+        # Do we need to have another logic signal here?
+        # Might not need to give it the retract(0)
 
         while True:
             if is_at_zero_position():
                 logging.info('End station is at the zero position')
-                self.io_board_2_2.pin('go_to_load(0)').value = False
-                self.io_board_2_2.pin('retract(0)').value = False
+                self.io_board_2_2.pin('go_to_load(0)').value = True
+                self.io_board_2_2.pin('retract(0)').value = True
 
                 return True
+            
+            if self.io_board_1_1.pin('hold'):
+                logging.warning('Hold button pressed') # remember what direction it was moving in (retract or extend)
+                result = self.hold_routine()  # get stuck here until the button is pressed
+                if not result:  # if they want to stop it while in hold mode
+                    # Do I call reset here?
+                    break
 
             else:
                 time.sleep(0.1)
@@ -354,6 +376,13 @@ class MachineControl:
                 logging.info('Extension completed')
                 self.io_board_2_2.pin('extend(0)').value = False
                 return True
+
+            if self.io_board_1_1.pin('hold'):
+                logging.warning('Hold button pressed') # remember what direction it was moving in (retract or extend)
+                result = self.hold_routine()  # get stuck here until the button is pressed
+                if not result:  # if they want to stop it while in hold mode
+                    # Do I call reset here?
+                    break
 
             else:
                 time.sleep(0.1)

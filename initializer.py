@@ -233,14 +233,14 @@ pins_config = {
         "retract(0)": {
           "name": "retract(0)",
           "mode": "output",
-          "init": False,
+          "init": True,
           "pin_num": 1,
           "socket": 2
         },
         "go_to_load(0)": {
           "name": "go_to_load(0)",
           "mode": "output",
-          "init": False,
+          "init": True,
           "pin_num": 2,
           "socket": 3
         },
